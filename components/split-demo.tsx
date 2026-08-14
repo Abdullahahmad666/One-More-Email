@@ -1,11 +1,56 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  type MotionProps,
+} from "framer-motion";
 import { Check, Mail, Pause, SendHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+/**
+ * The stamp's motion, defined once at module scope.
+ *
+ * These objects must keep a stable identity across renders. Inline literals —
+ * particularly the `scale` keyframe array — look new to Framer on every parent
+ * re-render, which restarts the entry animation on top of the exit and makes
+ * the stamp flash back to full opacity before it unmounts.
+ */
+const STAMP_MOTION: MotionProps = {
+  initial: { opacity: 0, rotate: -8, scale: 1.35 },
+  animate: {
+    opacity: 1,
+    rotate: -8,
+    scale: 1,
+    /*
+      A spring gives the press-and-settle overshoot the stamp needs. The
+      earlier version used a `scale` keyframe array with `times`, but a
+      transition's `times` applies to every property in the target — the
+      three-stop timing corrupted the scalar `opacity` and `rotate` alongside
+      it, which made the stamp fade up, fall away and snap back on entry.
+    */
+    transition: {
+      scale: { type: "spring", stiffness: 520, damping: 17, mass: 0.7 },
+      opacity: { duration: 0.14, ease: "easeOut" },
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.96,
+    transition: { duration: 0.16, ease: "easeOut" },
+  },
+};
+
+/** Reduced motion: the stamp is simply a static stamp (§4f). */
+const STAMP_MOTION_REDUCED: MotionProps = {
+  initial: { opacity: 1, rotate: -8, scale: 1 },
+  animate: { opacity: 1, rotate: -8, scale: 1, transition: { duration: 0 } },
+  exit: { opacity: 0, transition: { duration: 0 } },
+};
 
 /**
  * The positioning in one glance: the client's email on the left, our interface
@@ -141,22 +186,7 @@ Alex Rowe Design`}
                   /* Framer owns entry and exit. A CSS keyframe here would win
                      the cascade over Framer's inline opacity and strand the
                      stamp on screen through its exit. */
-                  initial={
-                    reduce
-                      ? { opacity: 1, rotate: -8, scale: 1 }
-                      : { opacity: 0, rotate: -8, scale: 1.35 }
-                  }
-                  animate={
-                    reduce
-                      ? { opacity: 1, rotate: -8, scale: 1 }
-                      : { opacity: 1, rotate: -8, scale: [1.35, 0.97, 1] }
-                  }
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={
-                    reduce
-                      ? { duration: 0 }
-                      : { duration: 0.32, ease: [0.2, 0.8, 0.3, 1], times: [0, 0.7, 1] }
-                  }
+                  {...(reduce ? STAMP_MOTION_REDUCED : STAMP_MOTION)}
                   className="shrink-0 rounded-btn border-2 px-4 py-1.5"
                   style={{
                     color: "var(--paid)",
