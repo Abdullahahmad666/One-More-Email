@@ -48,7 +48,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${archivo.variable} ${publicSans.variable} ${martianMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-paper text-ink">
+      {/* Browser extensions (ColorZilla, Grammarly, password managers) inject
+          attributes onto <body> before React hydrates, which React reports as a
+          mismatch. This suppresses the warning for this element's attributes
+          only — one level deep, never for our own children. */}
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-paper text-ink"
+      >
         {children}
       </body>
     </html>
