@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import { Sparkles } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Ladder } from "@/components/ladder";
 import { EmailCapture } from "@/components/email-capture";
 import { SplitDemo } from "@/components/split-demo";
+import { HowItWorks } from "@/components/how-it-works";
+import { TrustStrip } from "@/components/trust-strip";
 import { Pricing } from "@/components/pricing";
 import { FaqAccordion } from "@/components/faq-accordion";
-import { Reveal } from "@/components/reveal";
+import { Reveal } from "@/components/motion";
 import { FAQ } from "@/lib/faq";
 import { SITE } from "@/lib/site";
 
@@ -20,9 +23,9 @@ export const metadata: Metadata = {
  * Single job: get a cold visitor to understand the escalation ladder in under
  * 8 seconds and hand over an email address (§5a).
  *
- * Layout is 1080px max with copy held to a 680px measure, left-aligned. A
- * centred hero is the default look of every SaaS landing page; a left-aligned
- * block reads like a document, which is on-brief (§4d).
+ * Copy stays inside a ~680px measure and left-aligned. A centred hero is the
+ * default look of every SaaS landing page; a left-aligned block reads like a
+ * document, which is on-brief (§4d).
  */
 export default function Home() {
   return (
@@ -31,158 +34,160 @@ export default function Home() {
 
       <main id="top" className="flex-1">
         {/* ── Hero ─────────────────────────────────────────────── */}
-        <section className="mx-auto w-full max-w-[1080px] px-6 py-16 sm:py-24">
-          <div className="grid items-start gap-12 lg:grid-cols-2">
-            <div className="max-w-[680px]">
-              <p className="type-label text-ink-3">For freelancers</p>
+        {/* overflow-x-clip contains the decorative glow, which is deliberately
+            larger than its box. */}
+        <section className="mx-auto w-full max-w-[1140px] overflow-x-clip px-6 pt-12 pb-20 sm:pt-20 sm:pb-28">
+          {/* items-start, not center: the ladder card is deliberately tall, and
+              centring against it would push the headline below the fold. */}
+          <div className="grid items-start gap-12 lg:grid-cols-[1.08fr_1fr] lg:gap-16">
+            <div className="min-w-0 lg:pt-6">
+              <Reveal>
+                <span className="type-label inline-flex items-center gap-2 rounded-pill border border-rule bg-card px-3 py-1.5 whitespace-nowrap text-ink-2 shadow-soft">
+                  <Sparkles aria-hidden className="size-3 text-ink-3" />
+                  Freelancers, not bookkeepers
+                </span>
+              </Reveal>
 
-              <h1 className="type-display mt-4 text-[40px] leading-[1.06] sm:text-[56px] sm:leading-[1.02]">
-                You wrote the first email. We&apos;ll write the next four.
-              </h1>
+              <Reveal delay={0.06}>
+                <h1 className="type-display-tight mt-6 text-[42px] leading-[1.03] text-balance text-ink sm:text-[56px]">
+                  You wrote the first email. We&apos;ll write the next four.
+                </h1>
+              </Reveal>
 
-              <p className="mt-6 max-w-[560px] text-ink-2">
-                Automatic invoice chasing for freelancers. It gets firmer on a
-                schedule so you don&apos;t have to. Petty on the inside, polite
-                on the outside.
-              </p>
+              <Reveal delay={0.12}>
+                <p className="mt-6 max-w-[52ch] text-[18px] leading-[1.6] text-ink-2">
+                  Automatic invoice chasing that gets firmer on a schedule, so
+                  you don&apos;t have to. Petty on the inside, polite on the
+                  outside.
+                </p>
+              </Reveal>
 
-              <div className="mt-8 max-w-[520px]">
-                <EmailCapture source="hero" />
-              </div>
+              <Reveal delay={0.18}>
+                <div className="mt-9 max-w-[520px]">
+                  <EmailCapture source="hero" />
+                </div>
+              </Reveal>
             </div>
 
-            <Reveal>
-              <Ladder />
-            </Reveal>
+            <Ladder />
+          </div>
+        </section>
+
+        {/* ── Trust ────────────────────────────────────────────── */}
+        <section className="border-y border-rule bg-paper-2">
+          <div className="mx-auto w-full max-w-[1140px] px-6 py-14">
+            <TrustStrip />
           </div>
         </section>
 
         {/* ── How it works ─────────────────────────────────────── */}
-        <section id="how" className="border-t border-rule">
-          <div className="mx-auto w-full max-w-[1080px] px-6 py-16">
+        <section id="how" className="mx-auto w-full max-w-[1140px] px-6 py-20 sm:py-28">
+          <Reveal className="max-w-[680px]">
             <p className="type-label text-ink-3">How it works</p>
+            <h2 className="type-display mt-4 text-[32px] leading-[1.1] text-ink sm:text-[44px]">
+              Three decisions, then it runs itself.
+            </h2>
+            <p className="mt-4 max-w-[52ch] text-ink-2">
+              The whole product exists to shorten the distance between
+              &ldquo;this invoice is late&rdquo; and &ldquo;the money
+              arrived&rdquo;.
+            </p>
+          </Reveal>
 
-            {/* Numbered markers appear here and nowhere else, because this is
-                the only content on the page that genuinely is a sequence. */}
-            <ol className="mt-8 grid gap-8 sm:grid-cols-3">
-              {[
-                {
-                  n: "01",
-                  h: "Add the invoice",
-                  p: "Client, amount, due date. Six fields, one screen, no wizard.",
-                },
-                {
-                  n: "02",
-                  h: "Pick a cadence",
-                  p: "Gentle, Standard or Relentless. You see every send date before anything goes out.",
-                },
-                {
-                  n: "03",
-                  h: "Press “They paid”",
-                  p: "One button cancels the rest of the sequence. That's the whole job.",
-                },
-              ].map((step, i) => (
-                <Reveal key={step.n} delay={i * 60}>
-                  <li className="border-t border-rule pt-4">
-                    <p className="type-num text-[11px] text-ink-3">{step.n}</p>
-                    <h3 className="mt-2 text-title font-semibold">{step.h}</h3>
-                    <p className="mt-2 text-small text-ink-2">{step.p}</p>
-                  </li>
-                </Reveal>
-              ))}
-            </ol>
+          <div className="mt-12">
+            <HowItWorks />
           </div>
         </section>
 
-        {/* ── The thesis ───────────────────────────────────────── */}
-        <section className="border-t border-rule">
-          <div className="mx-auto w-full max-w-[1080px] px-6 py-16">
-            <Reveal>
-              <blockquote className="max-w-[680px] border-l-2 border-l-rule-strong pl-6">
-                <p className="type-display text-[28px] leading-[1.15]">
-                  The money isn&apos;t lost because the client refused. It&apos;s
-                  lost because nobody followed up on day 24.
-                </p>
-              </blockquote>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ── Client sees / you see ────────────────────────────── */}
-        <section className="border-t border-rule">
-          <div className="mx-auto w-full max-w-[1080px] px-6 py-16">
-            <div className="max-w-[680px]">
-              <h2 className="type-display text-[28px] leading-[1.15] sm:text-[40px] sm:leading-[1.06]">
+        {/* ── The dark band: client sees / you see ─────────────── */}
+        <section
+          id="emails"
+          className="on-band bg-band text-band-ink"
+        >
+          <div className="mx-auto w-full max-w-[1140px] px-6 py-20 sm:py-28">
+            <Reveal className="max-w-[720px]">
+              <p className="type-label text-band-ink-2">The split</p>
+              <h2 className="type-display mt-4 text-[32px] leading-[1.1] text-band-ink sm:text-[44px]">
                 Your client gets a professional email. You get to call it
-                “Disappointed”.
+                &ldquo;Disappointed&rdquo;.
               </h2>
-              <p className="mt-4 text-ink-2">
-                The tier names are ours. They never appear in anything your
-                client reads, and every email is one you&apos;d be happy to have
-                written yourself.
+              <p className="mt-4 max-w-[56ch] text-band-ink-2">
+                The tier names are ours and they never leave your screen. Every
+                email your client reads is one you&apos;d have been happy to
+                write yourself — which is exactly why it gets paid.
               </p>
-            </div>
+            </Reveal>
 
-            <div className="mt-10">
+            <div className="mt-12">
               <Reveal>
                 <SplitDemo />
               </Reveal>
             </div>
+
+            <Reveal className="mt-14 max-w-[720px] border-l-2 border-l-band-rule pl-6">
+              <p className="type-display text-[24px] leading-[1.25] text-band-ink sm:text-[30px]">
+                The money isn&apos;t lost because the client refused. It&apos;s
+                lost because nobody followed up on day 24.
+              </p>
+            </Reveal>
           </div>
         </section>
 
         {/* ── Pricing ──────────────────────────────────────────── */}
-        <section id="pricing" className="border-t border-rule">
-          <div className="mx-auto w-full max-w-[1080px] px-6 py-16">
-            <div className="max-w-[680px]">
-              <h2 className="type-display text-[28px] leading-[1.15] sm:text-[40px] sm:leading-[1.06]">
-                Costs less than the invoice you&apos;re not chasing.
-              </h2>
-              <p className="mt-4 text-ink-2">
-                Free for two invoices, forever — long enough to fix the client
-                who&apos;s ghosting you today.
-              </p>
-            </div>
+        <section id="pricing" className="mx-auto w-full max-w-[1140px] px-6 py-20 sm:py-28">
+          <Reveal className="max-w-[680px]">
+            <p className="type-label text-ink-3">Pricing</p>
+            <h2 className="type-display mt-4 text-[32px] leading-[1.1] text-ink sm:text-[44px]">
+              Costs less than the invoice you&apos;re not chasing.
+            </h2>
+            <p className="mt-4 max-w-[52ch] text-ink-2">
+              Free for two invoices, forever — long enough to fix the client
+              who&apos;s ghosting you today.
+            </p>
+          </Reveal>
 
-            <div className="mt-10">
-              <Reveal>
-                <Pricing />
+          <div className="mt-12">
+            <Pricing />
+          </div>
+        </section>
+
+        {/* ── FAQ ──────────────────────────────────────────────── */}
+        <section className="border-t border-rule bg-paper-2">
+          <div
+            id="faq"
+            className="mx-auto w-full max-w-[1140px] px-6 py-20 sm:py-28"
+          >
+            <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr]">
+              <Reveal className="min-w-0">
+                <p className="type-label text-ink-3">FAQ</p>
+                <h2 className="type-display mt-4 text-[32px] leading-[1.1] text-ink sm:text-[40px]">
+                  The questions everyone asks
+                </h2>
+              </Reveal>
+
+              <Reveal delay={0.06} className="min-w-0">
+                <FaqAccordion />
               </Reveal>
             </div>
           </div>
         </section>
 
-        {/* ── FAQ ──────────────────────────────────────────────── */}
-        <section id="faq" className="border-t border-rule">
-          <div className="mx-auto w-full max-w-[1080px] px-6 py-16">
-            <div className="max-w-[680px]">
-              <h2 className="type-display text-[28px] leading-[1.15] sm:text-[40px] sm:leading-[1.06]">
-                The questions everyone asks
+        {/* ── Final CTA ────────────────────────────────────────── */}
+        <section id="signup" className="on-band bg-band text-band-ink">
+          <div className="mx-auto w-full max-w-[1140px] px-6 py-20 sm:py-28">
+            <Reveal className="max-w-[680px]">
+              <h2 className="type-display-tight text-[34px] leading-[1.05] text-band-ink sm:text-[48px]">
+                One recovered invoice pays for a decade of this.
               </h2>
-
-              <div className="mt-8">
-                <FaqAccordion />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Signup ───────────────────────────────────────────── */}
-        <section id="signup" className="border-t border-rule">
-          <div className="mx-auto w-full max-w-[1080px] px-6 py-16">
-            <div className="max-w-[680px]">
-              <h2 className="type-display text-[28px] leading-[1.15] sm:text-[40px] sm:leading-[1.06]">
-                One late invoice pays for a decade of this.
-              </h2>
-              <p className="mt-4 text-ink-2">
+              <p className="mt-5 max-w-[52ch] text-band-ink-2">
                 We&apos;re building it now. Leave your email and you&apos;ll get
-                one message when it opens — nothing else.
+                exactly one message, on the day it opens.
               </p>
 
-              <div className="mt-8 max-w-[520px]">
-                <EmailCapture source="footer" />
+              <div className="mt-9 max-w-[540px]">
+                <EmailCapture source="footer" tone="band" />
               </div>
-            </div>
+            </Reveal>
           </div>
         </section>
       </main>
@@ -203,24 +208,9 @@ export default function Home() {
               description: SITE.description,
               url: SITE.url,
               offers: [
-                {
-                  "@type": "Offer",
-                  name: "Free",
-                  price: "0",
-                  priceCurrency: "USD",
-                },
-                {
-                  "@type": "Offer",
-                  name: "Solo",
-                  price: "9",
-                  priceCurrency: "USD",
-                },
-                {
-                  "@type": "Offer",
-                  name: "Studio",
-                  price: "19",
-                  priceCurrency: "USD",
-                },
+                { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
+                { "@type": "Offer", name: "Solo", price: "9", priceCurrency: "USD" },
+                { "@type": "Offer", name: "Studio", price: "19", priceCurrency: "USD" },
               ],
             },
             {
