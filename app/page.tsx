@@ -7,6 +7,7 @@ import { EmailCapture } from "@/components/email-capture";
 import { SplitDemo } from "@/components/split-demo";
 import { HowItWorks } from "@/components/how-it-works";
 import { TrustStrip } from "@/components/trust-strip";
+import { FeatureGrid } from "@/components/feature-grid";
 import { Pricing } from "@/components/pricing";
 import { FaqAccordion } from "@/components/faq-accordion";
 import { Reveal } from "@/components/motion";
@@ -130,6 +131,26 @@ export default function Home() {
                 lost because nobody followed up on day 24.
               </p>
             </Reveal>
+          </div>
+        </section>
+
+        {/* ── Everything else ──────────────────────────────────── */}
+        <section id="features" className="border-t border-rule bg-paper-2">
+          <div className="mx-auto w-full max-w-[1140px] px-6 py-20 sm:py-28">
+            <Reveal className="max-w-[680px]">
+              <p className="type-label text-ink-3">Everything else</p>
+              <h2 className="type-display mt-4 text-[32px] leading-[1.1] text-ink sm:text-[44px]">
+                The small things that decide whether you trust it.
+              </h2>
+              <p className="mt-4 max-w-[52ch] text-ink-2">
+                A chasing tool is only useful if you can see exactly what it did
+                and stop it instantly. That&apos;s most of what&apos;s here.
+              </p>
+            </Reveal>
+
+            <div className="mt-12">
+              <FeatureGrid />
+            </div>
           </div>
         </section>
 
