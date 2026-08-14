@@ -1,56 +1,137 @@
+import { FileCheck2, Lock, MailMinus } from "lucide-react";
 import { SITE } from "@/lib/site";
+import { LadderMark } from "@/components/ladder-mark";
 
-const COLUMNS = [
+/**
+ * Multi-column footer. Anything that resolves to a real destination is a link;
+ * anything still to be written is plain text marked "Soon". A footer full of
+ * dead links is worse than a smaller honest one, and this audience checks.
+ */
+const COLUMNS: {
+  title: string;
+  soon?: boolean;
+  links: { label: string; href?: string }[];
+}[] = [
   {
     title: "Product",
     links: [
       { label: "How it works", href: "#how" },
       { label: "The emails", href: "#emails" },
+      { label: "Everything else", href: "#features" },
       { label: "Pricing", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
   },
+  {
+    // Marked once at the column, not once per row — a badge on every line
+    // reads as clutter and collides with wrapped labels.
+    title: "Free tools",
+    soon: true,
+    links: [
+      { label: "Payment reminder generator" },
+      { label: "Late payment interest calculator" },
+      { label: "Email templates" },
+    ],
+  },
+  {
+    title: "Guides",
+    soon: true,
+    links: [
+      { label: "What to do when a client won't pay" },
+      { label: "Asking a client to pay, politely" },
+      { label: "How often to follow up" },
+      { label: "Small claims for unpaid invoices" },
+    ],
+  },
+  {
+    title: "Legal",
+    soon: true,
+    links: [{ label: "Privacy" }, { label: "Terms" }, { label: "DPA" }],
+  },
+];
+
+const BADGES = [
+  { icon: Lock, label: "SPF · DKIM · DMARC" },
+  { icon: MailMinus, label: "No tracking pixels" },
+  { icon: FileCheck2, label: "Export & delete" },
 ];
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-rule bg-paper-2">
-      <div className="mx-auto w-full max-w-[1140px] px-6 py-14">
-        <div className="grid gap-10 md:grid-cols-[2fr_1fr]">
-          <div className="max-w-[420px]">
-            <p className="type-label text-ink">{SITE.name}</p>
-            <p className="mt-3 text-small text-ink-2">
+      <div className="mx-auto w-full max-w-[1140px] px-6 py-16">
+        <div className="grid gap-12 lg:grid-cols-[1.4fr_2.6fr]">
+          {/* Brand */}
+          <div className="min-w-0 max-w-[340px]">
+            <div className="flex items-center gap-2.5">
+              <LadderMark />
+              <span className="type-label text-ink">{SITE.name}</span>
+            </div>
+
+            <p className="mt-4 text-small text-ink-2">
               Automatic invoice chasing for freelancers. It gets firmer on a
               schedule so you don&apos;t have to.
             </p>
+
+            <ul className="mt-6 flex flex-col gap-2.5">
+              {BADGES.map((badge) => (
+                <li key={badge.label} className="flex items-center gap-2.5">
+                  <badge.icon aria-hidden className="size-3.5 text-ink-3" />
+                  <span className="type-label text-ink-3">{badge.label}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {COLUMNS.map((column) => (
-            <div key={column.title}>
-              <p className="type-label text-ink-3">{column.title}</p>
-              <ul className="mt-4 flex flex-col gap-2.5">
-                {column.links.map((link) => (
-                  <li key={link.href}>
-                    <a
-                      href={link.href}
-                      className="text-small text-ink-2 transition-colors hover:text-ink"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Link columns */}
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {COLUMNS.map((column) => (
+              <div key={column.title} className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="type-label text-ink-3">{column.title}</p>
+                  {column.soon ? (
+                    <span className="type-label rounded-pill border border-rule px-1.5 py-0.5 text-[9px] text-ink-3">
+                      Soon
+                    </span>
+                  ) : null}
+                </div>
+
+                <ul className="mt-4 flex flex-col gap-3">
+                  {column.links.map((link) => (
+                    <li key={link.label}>
+                      {link.href ? (
+                        <a
+                          href={link.href}
+                          className="text-small text-ink-2 transition-colors hover:text-ink"
+                        >
+                          {link.label}
+                        </a>
+                      ) : (
+                        <span className="text-small text-ink-3">
+                          {link.label}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <hr className="my-10 border-0 border-t border-rule" />
-
-        <p className="max-w-[62ch] text-small text-ink-3">
-          Every email carries your reply address and a line saying it was sent on
-          your behalf. That&apos;s what keeps it honest, and it&apos;s also what
-          keeps it landing in inboxes.
-        </p>
+        {/* Bottom bar */}
+        <div className="mt-14 border-t border-rule pt-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="type-label text-ink-3">
+              © 2026 {SITE.name}
+            </p>
+            <p className="max-w-[52ch] text-small text-ink-3">
+              Every email carries your reply address and a line saying it was
+              sent on your behalf. That&apos;s what keeps it honest, and what
+              keeps it landing in inboxes.
+            </p>
+          </div>
+        </div>
       </div>
     </footer>
   );

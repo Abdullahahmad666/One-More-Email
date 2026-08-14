@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SITE } from "@/lib/site";
+import { LadderMark } from "@/components/ladder-mark";
 
 const LINKS = [
   { href: "#how", label: "How it works" },
@@ -111,23 +112,3 @@ export function SiteHeader() {
   );
 }
 
-/** The ladder, five bars, as a mark. The logo is the product. */
-function LadderMark() {
-  return (
-    <span aria-hidden className="flex flex-col justify-between gap-[2px]">
-      {["--t5-final", "--t4-disappointed", "--t3-concerned", "--t2-gentle", "--t1-friendly"].map(
-        (token, i) => (
-          <span
-            key={token}
-            className="block h-[2px] rounded-full"
-            style={{
-              width: 14 - i * 1.5,
-              background: `var(${token})`,
-              opacity: 0.45 + i * 0.14,
-            }}
-          />
-        ),
-      )}
-    </span>
-  );
-}
