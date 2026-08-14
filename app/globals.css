@@ -224,6 +224,27 @@ input:autofill {
 
 /* ── Quality floor (§4g) ──────────────────────────────────────── */
 
+/*
+  Tailwind v4's Preflight sets buttons to `cursor: default`, so nothing on the
+  page read as clickable. Restore the pointer for anything actually operable,
+  and mark disabled controls as unavailable rather than silently inert.
+
+  Deliberately not included: the Pause / Send next chips in the product demo.
+  They're a picture of the app, not working controls, so they keep the arrow.
+*/
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
