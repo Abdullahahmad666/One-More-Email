@@ -308,6 +308,97 @@ input:autofill {
   }
 }
 
+/* ── Loader ───────────────────────────────────────────────────────
+   A ball climbing steps, which is the ladder metaphor by accident and
+   worth keeping. Adapted from Uiverse.io by alexruix.
+
+   Every length is in `em` and the whole thing is sized by --loader-unit,
+   so one definition covers every scale. Colours come from custom
+   properties so the band can invert them without a second copy.
+   ---------------------------------------------------------------- */
+.loader {
+  --loader-unit: 10px;
+  --loader-ball: var(--ink);
+  --loader-step: var(--rule-strong);
+
+  position: relative;
+  width: 12em;
+  height: 9em;
+  font-size: var(--loader-unit);
+}
+
+.on-band .loader {
+  --loader-ball: var(--band-ink);
+  --loader-step: var(--band-rule);
+}
+
+.loader::before {
+  content: "";
+  position: absolute;
+  bottom: 3em;
+  left: 5em;
+  height: 3em;
+  width: 3em;
+  border-radius: 50%;
+  background: var(--loader-ball);
+  animation: loader-bounce 0.5s ease-in-out infinite alternate;
+}
+
+.loader::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 0.7em;
+  width: 4.5em;
+  border-radius: 0.4em;
+  box-shadow:
+    0 0.5em 0 var(--loader-step),
+    -3.5em 5em 0 var(--loader-step),
+    -7em 9.5em 0 var(--loader-step);
+  animation: loader-step 1s ease-in-out infinite;
+}
+
+@keyframes loader-bounce {
+  0% {
+    transform: scale(1, 0.7);
+  }
+  40% {
+    transform: scale(0.8, 1.2);
+  }
+  60% {
+    transform: scale(1, 1);
+  }
+  100% {
+    bottom: 14em;
+  }
+}
+
+@keyframes loader-step {
+  0% {
+    box-shadow:
+      0 1em 0 transparent,
+      0 1em 0 var(--loader-step),
+      -3.5em 5em 0 var(--loader-step),
+      -7em 9em 0 var(--loader-step);
+  }
+  100% {
+    box-shadow:
+      0 1em 0 var(--loader-step),
+      -3.5em 5em 0 var(--loader-step),
+      -7em 9em 0 var(--loader-step),
+      -7em 9em 0 transparent;
+  }
+}
+
+/* Reduced motion: hold the ball on the bottom step rather than animating. */
+@media (prefers-reduced-motion: reduce) {
+  .loader::before,
+  .loader::after {
+    animation: none;
+  }
+}
+
 /* Ambient shimmer across the ladder's active rung. */
 @keyframes rung-sheen {
   from {
