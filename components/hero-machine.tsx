@@ -1,8 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { RotateCcw } from "lucide-react";
 import { TIERS } from "@/lib/ladder";
 import { demoSheet } from "@/lib/demo";
 import { EmailCapture } from "@/components/email-capture";
@@ -21,6 +20,13 @@ const MS_PER_DAY = 120;
 const DWELL_MS = 900;
 const SHEET_OFFSET = 44;
 
+/**
+ * How long the ending holds before the demo runs again. The exhausted verdict
+ * is three lines and needs longer than the paid one, which is a single
+ * sentence the visitor already understood — they pressed the button.
+ */
+const RESTART_MS = { paid: 5000, exhausted: 6500 } as const;
+
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 type Phase = "idle" | "running" | "paid" | "exhausted";
@@ -34,6 +40,8 @@ export function HeroMachine() {
   const [day, setDay] = useState(0);
   const [sent, setSent] = useState(0);
   const [phase, setPhase] = useState<Phase>("idle");
+  /** Nothing animates or auto-restarts while the machine is off screen. */
+  const [inView, setInView] = useState(false);
 
   // Refs carry the live values into the animation frame without re-subscribing.
   const dayRef = useRef(0);
@@ -41,6 +49,8 @@ export function HeroMachine() {
   const dwellUntil = useRef(0);
   const reduceRef = useRef(reduce);
   reduceRef.current = reduce;
+  const phaseRef = useRef<Phase>(phase);
+  phaseRef.current = phase;
 
   const jumpToEnd = useCallback(() => {
     dayRef.current = TOTAL_DAYS;
@@ -50,18 +60,20 @@ export function HeroMachine() {
     setPhase("exhausted");
   }, []);
 
-  /* Start only once the machine is actually on screen. */
+  /* Track visibility for the whole lifetime, not just the first entry: the
+     clock and the auto-restart both stay parked while the hero is scrolled
+     past, so nothing loops at someone reading the pricing table. */
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
+        setInView(entry.isIntersecting);
+        if (!entry.isIntersecting || phaseRef.current !== "idle") return;
         // Reduced motion gets the finished state rather than no state.
         if (reduceRef.current) jumpToEnd();
-        else setPhase((p) => (p === "idle" ? "running" : p));
+        else setPhase("running");
       },
       // The machine is taller than most viewports, so a percentage threshold
       // can never be met on a short screen. Start as soon as any of it shows.
@@ -74,7 +86,7 @@ export function HeroMachine() {
 
   /* The clock. */
   useEffect(() => {
-    if (phase !== "running") return;
+    if (phase !== "running" || !inView) return;
 
     let last: number | null = null;
     let frame = requestAnimationFrame(function step(ts) {
@@ -105,18 +117,28 @@ export function HeroMachine() {
     });
 
     return () => cancelAnimationFrame(frame);
-  }, [phase]);
+  }, [phase, inView]);
 
   const markPaid = () => setPhase((p) => (p === "paid" ? p : "paid"));
 
-  const replay = () => {
+  const replay = useCallback(() => {
     dayRef.current = 0;
     sentRef.current = 0;
     dwellUntil.current = 0;
     setDay(0);
     setSent(0);
     setPhase("running");
-  };
+  }, []);
+
+  /* Run it again on its own. No button asking to re-watch — if the ending has
+     been on screen long enough to read, the demo simply starts over. */
+  useEffect(() => {
+    if (reduce || !inView) return;
+    if (phase !== "paid" && phase !== "exhausted") return;
+
+    const timer = setTimeout(replay, RESTART_MS[phase]);
+    return () => clearTimeout(timer);
+  }, [phase, inView, reduce, replay]);
 
   const wholeDay = Math.floor(day);
   const current = [...TIERS].reverse().find((t) => day >= t.defaultOffset);
@@ -134,7 +156,7 @@ export function HeroMachine() {
       ref={rootRef}
       className="flex flex-col gap-10 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)] lg:items-start lg:gap-14"
     >
-      {/* ── The clock ─────────────────────────────────────────── */}
+      {/* â”€â”€ The clock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="min-w-0 lg:col-start-1 lg:row-start-1">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
           <span className="type-label text-ink-3">Day</span>
@@ -170,7 +192,7 @@ export function HeroMachine() {
         <Rail day={day} />
       </div>
 
-      {/* ── The desk ──────────────────────────────────────────── */}
+      {/* â”€â”€ The desk â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1">
         <div className="flex items-center justify-between gap-4">
           <span className="type-label text-ink-3">Sent on your behalf</span>
@@ -259,36 +281,57 @@ export function HeroMachine() {
         </div>
       </div>
 
-      {/* ── Controls, verdict, capture ────────────────────────── */}
+      {/* â”€â”€ Controls, verdict, capture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="min-w-0 lg:col-start-1 lg:row-start-2">
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={markPaid}
-            disabled={settled}
-            className={cn(
-              "relative inline-flex h-11 items-center rounded-btn bg-ink px-5 text-small font-medium text-[color:var(--paper)] shadow-raised disabled:opacity-40 disabled:shadow-none",
-              sent >= 2 && !settled && !finished ? "animate-ping-ring" : "",
-            )}
-          >
-            They paid
-          </button>
+        {/*
+          The controls swap rather than stack up as dead buttons. While the
+          demo runs there is exactly one thing to do — stop it. Once it's over,
+          "They paid" has nothing left to act on, so the row becomes a quiet
+          way back instead of two disabled controls sitting side by side.
+        */}
+        <div className="flex min-h-[44px] flex-wrap items-center gap-3">
+          {settled || finished ? (
+            /* A depleting rule instead of a button: it explains the restart
+               without asking for a click, and it can't be mistaken for a
+               product control the way "Replay" could.
 
-          <button
-            type="button"
-            onClick={replay}
-            disabled={phase === "running" || phase === "idle"}
-            className="inline-flex h-11 items-center gap-2 rounded-btn border border-rule-strong px-4 text-small font-medium text-ink-2 transition-colors hover:bg-card hover:text-ink disabled:opacity-40"
-          >
-            <RotateCcw aria-hidden className="size-3.5" />
-            Replay
-          </button>
+               Hidden under reduced motion, where there is no auto-restart to
+               announce — the demo has already shown its finished state. */
+            reduce ? null : (
+            <div className="flex items-center gap-3">
+              <span className="type-label text-ink-3">Starting again</span>
+              <span className="relative block h-px w-24 overflow-hidden bg-rule">
+                <motion.span
+                  key={`${phase}-countdown`}
+                  className="absolute inset-y-0 left-0 bg-rule-strong"
+                  initial={{ width: "100%" }}
+                  animate={{ width: "0%" }}
+                  transition={{
+                    duration: RESTART_MS[settled ? "paid" : "exhausted"] / 1000,
+                    ease: "linear",
+                  }}
+                />
+              </span>
+            </div>
+            )
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={markPaid}
+                className={cn(
+                  "relative inline-flex h-11 items-center rounded-btn bg-ink px-5 text-small font-medium text-[color:var(--paper)] shadow-raised",
+                  sent >= 2 ? "animate-ping-ring" : "",
+                )}
+              >
+                They paid
+              </button>
 
-          {!settled && !finished ? (
-            <span className="text-small text-ink-3">
-              Or wait — it sends the next one on its own.
-            </span>
-          ) : null}
+              <span className="text-small text-ink-3">
+                Or wait — it sends the next one on its own.
+              </span>
+            </>
+          )}
         </div>
 
         <AnimatePresence>

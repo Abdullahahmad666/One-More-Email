@@ -1,16 +1,16 @@
 ﻿/**
- * The escalation ladder is the product (Â§1).
+ * The escalation ladder is the product (§1).
  *
  * Hard rule: the internal tier name NEVER appears in the email the client
  * receives. The humour lives entirely in our interface; the emails are
- * impeccably professional (Â§1, Â§6a).
+ * impeccably professional (§1, §6a).
  */
 
 export type TierId = 1 | 2 | 3 | 4 | 5;
 
 export interface Tier {
   id: TierId;
-  /** Internal name â€” user-facing in our UI only. */
+  /** Internal name — user-facing in our UI only. */
   name: string;
   /** Default offset in days from the invoice due date. */
   defaultOffset: number;
@@ -78,7 +78,7 @@ export function getTier(id: TierId): Tier {
   return tier;
 }
 
-/** Three presets and nothing else (Â§3b). */
+/** Three presets and nothing else (§3b). */
 export type CadenceId = "gentle" | "standard" | "relentless";
 
 export interface Cadence {
@@ -124,7 +124,7 @@ export const CADENCES: Record<CadenceId, Cadence> = {
 
 export const DEFAULT_CADENCE: CadenceId = "standard";
 
-/** Invoice lifecycle (Â§3d). */
+/** Invoice lifecycle (§3d). */
 export type InvoiceStatus =
   | "draft"
   | "scheduled"
