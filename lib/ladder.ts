@@ -1,16 +1,16 @@
-/**
- * The escalation ladder is the product (§1).
+﻿/**
+ * The escalation ladder is the product (Â§1).
  *
  * Hard rule: the internal tier name NEVER appears in the email the client
  * receives. The humour lives entirely in our interface; the emails are
- * impeccably professional (§1, §6a).
+ * impeccably professional (Â§1, Â§6a).
  */
 
 export type TierId = 1 | 2 | 3 | 4 | 5;
 
 export interface Tier {
   id: TierId;
-  /** Internal name — user-facing in our UI only. */
+  /** Internal name â€” user-facing in our UI only. */
   name: string;
   /** Default offset in days from the invoice due date. */
   defaultOffset: number;
@@ -18,6 +18,10 @@ export interface Tier {
   clientSees: string;
   /** CSS custom property carrying this tier's colour. */
   colorVar: `--t${TierId}-${string}`;
+  /** Pale chip background for this tier. */
+  washVar: `--t${TierId}-wash`;
+  /** Deep ink that passes contrast on `washVar`. */
+  deepVar: `--t${TierId}-deep`;
 }
 
 export const TIERS: readonly Tier[] = [
@@ -27,6 +31,8 @@ export const TIERS: readonly Tier[] = [
     defaultOffset: 3,
     clientSees: "Warm, assumes it slipped through",
     colorVar: "--t1-friendly",
+    washVar: "--t1-wash",
+    deepVar: "--t1-deep",
   },
   {
     id: 2,
@@ -34,6 +40,8 @@ export const TIERS: readonly Tier[] = [
     defaultOffset: 10,
     clientSees: "Brief, factual, restates the link",
     colorVar: "--t2-gentle",
+    washVar: "--t2-wash",
+    deepVar: "--t2-deep",
   },
   {
     id: 3,
@@ -41,6 +49,8 @@ export const TIERS: readonly Tier[] = [
     defaultOffset: 21,
     clientSees: "Names the delay, asks for a date",
     colorVar: "--t3-concerned",
+    washVar: "--t3-wash",
+    deepVar: "--t3-deep",
   },
   {
     id: 4,
@@ -48,6 +58,8 @@ export const TIERS: readonly Tier[] = [
     defaultOffset: 30,
     clientSees: "Formal, references the agreement",
     colorVar: "--t4-disappointed",
+    washVar: "--t4-wash",
+    deepVar: "--t4-deep",
   },
   {
     id: 5,
@@ -55,6 +67,8 @@ export const TIERS: readonly Tier[] = [
     defaultOffset: 45,
     clientSees: "Cold, states what happens next",
     colorVar: "--t5-final",
+    washVar: "--t5-wash",
+    deepVar: "--t5-deep",
   },
 ] as const;
 
@@ -64,7 +78,7 @@ export function getTier(id: TierId): Tier {
   return tier;
 }
 
-/** Three presets and nothing else (§3b). */
+/** Three presets and nothing else (Â§3b). */
 export type CadenceId = "gentle" | "standard" | "relentless";
 
 export interface Cadence {
@@ -110,7 +124,7 @@ export const CADENCES: Record<CadenceId, Cadence> = {
 
 export const DEFAULT_CADENCE: CadenceId = "standard";
 
-/** Invoice lifecycle (§3d). */
+/** Invoice lifecycle (Â§3d). */
 export type InvoiceStatus =
   | "draft"
   | "scheduled"
