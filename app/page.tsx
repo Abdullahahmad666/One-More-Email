@@ -3,6 +3,7 @@ import { Sparkles } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Ladder } from "@/components/ladder";
+import { HeroMachine } from "@/components/hero-machine";
 import { EmailCapture } from "@/components/email-capture";
 import { SplitDemo } from "@/components/split-demo";
 import { HowItWorks } from "@/components/how-it-works";
@@ -37,40 +38,40 @@ export default function Home() {
         {/* ── Hero ─────────────────────────────────────────────── */}
         {/* overflow-x-clip contains the decorative glow, which is deliberately
             larger than its box. */}
-        <section className="mx-auto w-full max-w-[1140px] overflow-x-clip px-6 pt-12 pb-20 sm:pt-20 sm:pb-28">
-          {/* items-start, not center: the ladder card is deliberately tall, and
-              centring against it would push the headline below the fold. */}
-          <div className="grid items-start gap-12 lg:grid-cols-[1.08fr_1fr] lg:gap-16">
-            <div className="min-w-0 lg:pt-6">
-              <Reveal>
-                <span className="type-label inline-flex items-center gap-2 rounded-pill border border-rule bg-card px-3 py-1.5 whitespace-nowrap text-ink-2 shadow-soft">
-                  <Sparkles aria-hidden className="size-3 text-ink-3" />
-                  Freelancers, not bookkeepers
-                </span>
-              </Reveal>
+        <section className="mx-auto w-full max-w-[1140px] overflow-x-clip px-6 pt-8 pb-16 sm:pt-12 sm:pb-24">
+          {/* The headline measure is set in px, not ch: a ch-based max-width on
+              this wrapper resolves against the 16px body font rather than the
+              54px headline, which breaks the line one word at a time. */}
+          <div>
+            <Reveal>
+              <span className="type-label inline-flex items-center gap-2 rounded-pill border border-rule bg-card px-3 py-1.5 whitespace-nowrap text-ink-2 shadow-soft">
+                <Sparkles aria-hidden className="size-3 text-ink-3" />
+                {/* The send date is the first thing to go on a narrow screen —
+                    the pill must stay on one line to read as a stamp. */}
+                Invoice 0042 ·{" "}
+                <span className="hidden sm:inline">sent 14 July · </span>
+                unpaid
+              </span>
+            </Reveal>
 
-              <Reveal delay={0.06}>
-                <h1 className="type-display-tight mt-6 text-[42px] leading-[1.03] text-balance text-ink sm:text-[56px]">
-                  You wrote the first email. We&apos;ll write the next four.
-                </h1>
-              </Reveal>
+            <Reveal delay={0.06}>
+              <h1 className="type-display-tight mt-5 max-w-[15ch] text-[34px] leading-[1.03] text-balance text-ink sm:text-[46px] lg:text-[54px]">
+                Watch 45 days of chasing happen{" "}
+                <span className="text-ink-3">without you.</span>
+              </h1>
+            </Reveal>
+          </div>
 
-              <Reveal delay={0.12}>
-                <p className="mt-6 max-w-[52ch] text-[18px] leading-[1.6] text-ink-2">
-                  Automatic invoice chasing that gets firmer on a schedule, so
-                  you don&apos;t have to. Petty on the inside, polite on the
-                  outside.
-                </p>
-              </Reveal>
+          <Reveal delay={0.12}>
+            <p className="mt-5 max-w-[54ch] text-[17px] leading-[1.6] text-ink-2">
+              Automatic invoice chasing for freelancers. It gets firmer on a
+              schedule so you don&apos;t have to. Petty on the inside, polite on
+              the outside.
+            </p>
+          </Reveal>
 
-              <Reveal delay={0.18}>
-                <div className="mt-9 max-w-[520px]">
-                  <EmailCapture source="hero" />
-                </div>
-              </Reveal>
-            </div>
-
-            <Ladder />
+          <div className="mt-10 sm:mt-12">
+            <HeroMachine />
           </div>
         </section>
 
@@ -100,9 +101,32 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── The five emails, in full ─────────────────────────── */}
+        <section id="emails" className="border-t border-rule bg-paper-2">
+          <div className="mx-auto w-full max-w-[1140px] px-6 py-20 sm:py-28">
+            <div className="grid items-start gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
+              <Reveal className="min-w-0 lg:pt-4">
+                <p className="type-label text-ink-3">The five emails</p>
+                <h2 className="type-display mt-4 text-[32px] leading-[1.1] text-ink sm:text-[44px]">
+                  You wrote the first email. We&apos;ll write the next four.
+                </h2>
+                <p className="mt-4 max-w-[52ch] text-ink-2">
+                  Read every one of them right now, word for word, before you
+                  hand over an address. Click any rung — the ladder is the whole
+                  product, and there&apos;s nothing behind a signup wall.
+                </p>
+              </Reveal>
+
+              <div className="min-w-0">
+                <Ladder />
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── The dark band: client sees / you see ─────────────── */}
         <section
-          id="emails"
+          id="split"
           className="on-band bg-band text-band-ink"
         >
           <div className="mx-auto w-full max-w-[1140px] px-6 py-20 sm:py-28">
