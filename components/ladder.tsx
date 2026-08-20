@@ -27,8 +27,13 @@ export function Ladder() {
   return (
     /* min-w-0 lets this grid item shrink below its content's min-content width,
        so the truncated address line can actually truncate instead of forcing
-       the whole hero column wider than the viewport. */
-    <div className="relative min-w-0">
+       the whole column wider than the viewport.
+
+       overflow-x-clip belongs here rather than on the page section: the glow
+       below is deliberately wider than its box, so containing it at the source
+       means the ladder can be dropped anywhere without leaking a horizontal
+       scrollbar. Vertical bleed is preserved. */
+    <div className="relative min-w-0 overflow-x-clip">
       <div className="glow-ramp absolute inset-0 -z-10" aria-hidden />
 
       <motion.div
