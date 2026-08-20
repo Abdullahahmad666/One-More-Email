@@ -23,6 +23,7 @@ professional, and the internal tier name (`Disappointed`, `Final Notice`) never 
 | Styling | Tailwind v4 with the tokens in `app/globals.css` |
 | Motion | Framer Motion, one shared vocabulary in `components/motion.tsx` |
 | Icons | Lucide |
+| Loading | `components/loader.tsx` — the house loader, see below |
 
 ## Getting started
 
@@ -52,6 +53,17 @@ The base is the playbook's paperwork system — cheque-safety palette, ledger ru
 escalation ramp where colour is never decorative (deep red belongs to tier 5 and nothing
 else). On top of that sits a premium finish: a single deep ink band, softened radii, layered
 shadows, a translucent sticky nav, and scroll-triggered motion.
+
+### Waiting states
+
+`<Loader />` is the house loader — a ball climbing steps, which lands on the ladder
+metaphor by accident and is worth keeping. Use it for **any block-level wait**: route
+transitions, a panel fetching, a section that isn't ready yet. Sizes are `sm` / `md` / `lg`,
+it re-colours itself inside `.on-band`, and it holds still under reduced motion.
+
+It is not an inline spinner. The ball deliberately travels well above its own box, so in a
+button or a line of text it would be clipped or overlap the label — those keep the small
+Lucide spinner. Anything with room for a block gets the loader.
 
 There is deliberately no logo bar and no testimonials — we have no customers yet, and a fake
 one is the fastest way to lose a technical audience. The trust strip states things the
