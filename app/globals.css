@@ -38,6 +38,23 @@
   --t4-disappointed: #be5d26;
   --t5-final: #9e1b21;
 
+  /*
+    Tier chips: a pale wash with its own deep ink. Kept separate from the ramp
+    above because the ramp colours are fills, and several of them — ochre most
+    of all — fail contrast as text. These pass on the wash (§4g).
+  */
+  --t1-wash: #e4ebe6;
+  --t2-wash: #e9ecdf;
+  --t3-wash: #f5ead4;
+  --t4-wash: #f7e3d5;
+  --t5-wash: #f5dede;
+
+  --t1-deep: #3a5548;
+  --t2-deep: #4e5a2f;
+  --t3-deep: #7a5a12;
+  --t4-deep: #8a400f;
+  --t5-deep: #7c1015;
+
   /* Status */
   --paid: #2f6e4f;
   --paused: #7c8880;
@@ -260,6 +277,36 @@ input:autofill {
 /* The reward moment — PAID rotating in at -8° and settling — is driven by
    Framer Motion in split-demo.tsx, not from here. A CSS keyframe would outrank
    Framer's inline styles on exit and restart whenever React moved the node. */
+
+/* A slow ring off the "They paid" button once the demo is clearly running —
+   the only thing on the page asking to be clicked while it plays. */
+@keyframes ping-ring {
+  0% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+
+.animate-ping-ring::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid var(--ink);
+  border-radius: inherit;
+  animation: ping-ring 2.4s ease-out infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ping-ring::after {
+    display: none;
+  }
+}
 
 /* Ambient shimmer across the ladder's active rung. */
 @keyframes rung-sheen {
