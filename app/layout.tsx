@@ -38,8 +38,20 @@ export const metadata: Metadata = {
     url: SITE.url,
     siteName: SITE.name,
     type: "website",
+    locale: "en_GB",
   },
-  robots: { index: true, follow: true },
+  // The image itself comes from app/twitter-image.tsx; this only sets the card
+  // type, without which X renders a small thumbnail instead of the ladder.
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE.name} — ${SITE.tagline}`,
+    description: SITE.description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
