@@ -39,28 +39,34 @@ async function store(record: {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (url && key) {
-    const res = await fetch(`${url}/rest/v1/signups`, {
+    // on_conflict names the unique column so ignore-duplicates actually
+    // applies: without it PostgREST has no conflict target and a repeat
+    // signup comes back as a 409 instead of being quietly absorbed.
+    const res = await fetch(`${url}/rest/v1/waitlist?on_conflict=email`, {
       method: "POST",
       headers: {
         apikey: key,
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
-        Prefer: "resolution=ignore-duplicates",
+        Prefer: "resolution=ignore-duplicates,return=minimal",
       },
       body: JSON.stringify(record),
     });
 
-    if (!res.ok) {
-      throw new Error(`Supabase insert failed: ${res.status}`);
-    }
-    return;
+    // A second signup from the same address is a success, not an error --
+    // never tell a visitor whether an address is already on the list.
+    if (res.ok || res.status === 409) return;
+
+    throw new Error(
+      `Supabase insert failed: ${res.status} ${await res.text().catch(() => "")}`,
+    );
   }
 
   // Local fallback so the smoke test works before Supabase exists.
   if (process.env.NODE_ENV !== "production") {
     const { appendFile, mkdir } = await import("node:fs/promises");
     await mkdir(".data", { recursive: true });
-    await appendFile(".data/signups.jsonl", `${JSON.stringify(record)}\n`, "utf8");
+    await appendFile(".data/waitlist.jsonl", `${JSON.stringify(record)}\n`, "utf8");
     return;
   }
 
