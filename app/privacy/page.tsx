@@ -31,6 +31,7 @@ export default function PrivacyPage() {
                 be at the top of the page and not only in the nav. */}
             <Link
               href="/"
+              scroll={false}
               className="group type-label inline-flex items-center gap-2 text-ink-3 transition-colors hover:text-ink"
             >
               <ArrowLeft

@@ -69,7 +69,7 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2.6fr]">
           {/* Brand */}
           <div className="min-w-0 max-w-[340px]">
-            <Link href="/" className="flex items-center gap-2.5">
+            <Link href="/" scroll={false} className="flex items-center gap-2.5">
               <LadderMark />
               <span className="type-label text-ink">{SITE.name}</span>
             </Link>
@@ -108,6 +108,7 @@ export function SiteFooter() {
                       {link.href ? (
                         <Link
                           href={link.href}
+                          scroll={false}
                           className="text-small text-ink-2 transition-colors hover:text-ink"
                         >
                           {link.label}

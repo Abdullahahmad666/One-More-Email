@@ -49,7 +49,7 @@ export function SiteHeader() {
       )}
     >
       <div className="mx-auto flex w-full max-w-[1140px] items-center justify-between gap-6 px-6 py-4">
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href="/" scroll={false} className="flex items-center gap-2.5">
           <LadderMark />
           <span className="type-label text-ink">{SITE.name}</span>
         </Link>
@@ -59,6 +59,7 @@ export function SiteHeader() {
             <Link
               key={link.href}
               href={link.href}
+              scroll={false}
               className="text-small text-ink-2 transition-colors hover:text-ink"
             >
               {link.label}
@@ -69,6 +70,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <Link
             href="/#signup"
+            scroll={false}
             className="group hidden items-center gap-2 rounded-btn bg-ink px-4 py-2.5 text-small font-medium text-[color:var(--paper)] shadow-soft transition-transform duration-200 hover:-translate-y-0.5 sm:inline-flex"
           >
             Start chasing
@@ -106,6 +108,7 @@ export function SiteHeader() {
               <Link
                 key={link.href}
                 href={link.href}
+                scroll={false}
                 onClick={() => setOpen(false)}
                 className="border-b border-rule py-3 text-small text-ink-2 last:border-b-0"
               >
