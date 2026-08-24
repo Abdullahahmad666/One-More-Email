@@ -1,17 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SITE } from "@/lib/site";
 import { LadderMark } from "@/components/ladder-mark";
 
+/**
+ * Root-relative, not bare "#how": a bare hash only resolves on the landing
+ * page, so from /privacy every one of these was a dead link. "/#how" scrolls
+ * on the landing page and navigates home from anywhere else.
+ */
 const LINKS = [
-  { href: "#how", label: "How it works" },
-  { href: "#emails", label: "The emails" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/#how", label: "How it works" },
+  { href: "/#emails", label: "The emails" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/#faq", label: "FAQ" },
+  { href: "/privacy", label: "Privacy" },
 ];
 
 /**
@@ -42,26 +49,26 @@ export function SiteHeader() {
       )}
     >
       <div className="mx-auto flex w-full max-w-[1140px] items-center justify-between gap-6 px-6 py-4">
-        <a href="#top" className="flex items-center gap-2.5">
+        <Link href="/" className="flex items-center gap-2.5">
           <LadderMark />
           <span className="type-label text-ink">{SITE.name}</span>
-        </a>
+        </Link>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Sections">
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
           {LINKS.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="text-small text-ink-2 transition-colors hover:text-ink"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-2">
-          <a
-            href="#signup"
+          <Link
+            href="/#signup"
             className="group hidden items-center gap-2 rounded-btn bg-ink px-4 py-2.5 text-small font-medium text-[color:var(--paper)] shadow-soft transition-transform duration-200 hover:-translate-y-0.5 sm:inline-flex"
           >
             Start chasing
@@ -69,7 +76,7 @@ export function SiteHeader() {
               aria-hidden
               className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
             />
-          </a>
+          </Link>
 
           <button
             type="button"
@@ -92,18 +99,18 @@ export function SiteHeader() {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           className="overflow-hidden border-t border-rule bg-[color:var(--paper)]/95 backdrop-blur-xl md:hidden"
-          aria-label="Sections"
+          aria-label="Main"
         >
           <div className="mx-auto flex w-full max-w-[1140px] flex-col px-6 py-2">
             {LINKS.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className="border-b border-rule py-3 text-small text-ink-2 last:border-b-0"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
         </motion.nav>

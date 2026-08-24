@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FileCheck2, Lock, MailMinus } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { LadderMark } from "@/components/ladder-mark";
@@ -10,16 +11,16 @@ import { LadderMark } from "@/components/ladder-mark";
 const COLUMNS: {
   title: string;
   soon?: boolean;
-  links: { label: string; href?: string }[];
+  links: { label: string; href?: string; soon?: boolean }[];
 }[] = [
   {
     title: "Product",
     links: [
-      { label: "How it works", href: "#how" },
-      { label: "The emails", href: "#emails" },
-      { label: "Everything else", href: "#features" },
-      { label: "Pricing", href: "#pricing" },
-      { label: "FAQ", href: "#faq" },
+      { label: "How it works", href: "/#how" },
+      { label: "The emails", href: "/#emails" },
+      { label: "Everything else", href: "/#features" },
+      { label: "Pricing", href: "/#pricing" },
+      { label: "FAQ", href: "/#faq" },
     ],
   },
   {
@@ -44,9 +45,14 @@ const COLUMNS: {
     ],
   },
   {
+    // Privacy is live because we are already collecting addresses; Terms and
+    // the DPA are not needed until there is a product to sell.
     title: "Legal",
-    soon: true,
-    links: [{ label: "Privacy" }, { label: "Terms" }, { label: "DPA" }],
+    links: [
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", soon: true },
+      { label: "DPA", soon: true },
+    ],
   },
 ];
 
@@ -63,10 +69,10 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2.6fr]">
           {/* Brand */}
           <div className="min-w-0 max-w-[340px]">
-            <div className="flex items-center gap-2.5">
+            <Link href="/" className="flex items-center gap-2.5">
               <LadderMark />
               <span className="type-label text-ink">{SITE.name}</span>
-            </div>
+            </Link>
 
             <p className="mt-4 text-small text-ink-2">
               Automatic invoice chasing for freelancers. It gets firmer on a
@@ -100,15 +106,20 @@ export function SiteFooter() {
                   {column.links.map((link) => (
                     <li key={link.label}>
                       {link.href ? (
-                        <a
+                        <Link
                           href={link.href}
                           className="text-small text-ink-2 transition-colors hover:text-ink"
                         >
                           {link.label}
-                        </a>
+                        </Link>
                       ) : (
-                        <span className="text-small text-ink-3">
+                        <span className="flex items-center gap-2 text-small text-ink-3">
                           {link.label}
+                          {link.soon ? (
+                            <span className="type-label rounded-pill border border-rule px-1.5 py-0.5 text-[9px] text-ink-3">
+                              Soon
+                            </span>
+                          ) : null}
                         </span>
                       )}
                     </li>
