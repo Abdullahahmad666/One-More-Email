@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, Public_Sans, Martian_Mono } from "next/font/google";
 import "./globals.css";
+import { ScrollReset } from "@/components/scroll-reset";
 import { SITE } from "@/lib/site";
 
 // §4c — three roles, three faces. Self-hosted via next/font (§7d).
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-paper text-ink"
       >
+        <ScrollReset />
         {children}
       </body>
     </html>
