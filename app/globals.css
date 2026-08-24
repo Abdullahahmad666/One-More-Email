@@ -278,6 +278,26 @@ input:autofill {
    Framer Motion in split-demo.tsx, not from here. A CSS keyframe would outrank
    Framer's inline styles on exit and restart whenever React moved the node. */
 
+/*
+  Suspense fallbacks flash on fast navigations, and a loader that appears for
+  40ms reads as a glitch rather than as progress. This holds it invisible for
+  320ms and then fades it in: a quick navigation shows nothing at all, and a
+  slow one shows a loader that arrives deliberately.
+
+  Under reduced motion the global override collapses the duration but leaves
+  the delay, so the behaviour is the same minus the fade.
+*/
+.loader-gate {
+  opacity: 0;
+  animation: loader-gate-in 180ms ease-out 320ms forwards;
+}
+
+@keyframes loader-gate-in {
+  to {
+    opacity: 1;
+  }
+}
+
 /* A slow ring off the "They paid" button once the demo is clearly running —
    the only thing on the page asking to be clicked while it plays. */
 @keyframes ping-ring {
